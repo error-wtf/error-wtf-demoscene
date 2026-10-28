@@ -49,6 +49,7 @@ Kunst, Musik, Branding und Code dieses Projekts sind eigenständig — siehe
 ## Dokumentation
 
 - `docs/1m/` — komplette 1MiB-Entwicklungsdoku (Baseline, Triade, Musik, Produktion)
+- `docs/briefings/` — die verbindlichen Auftragsdokumente (Master Director's Cut, 1MiB-Folgeauftrag, Medien-Folgeauftrag) — Spec-Quelle dieses Projekts
 - `docs/ENVIRONMENT_AUDIT.md` — gemessene Hardware/Stack-Realität
 - `docs/PROVIDER_COST_AUDIT.md` — 0,00 €-Kostenprüfung
 - `docs/AUFTRAG_KERNREGELN.md` — verbindliche Kernregeln
