@@ -8,6 +8,7 @@
  * States: ORDER (precise groove, pure motif) / FRACTURE (jitter, dissonance,
  * slowed motif) / RESOLUTION (major-colored motif, calm).
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -119,15 +120,15 @@ double score_sample(double t) {
     return out;
 }
 
-/* ---- offline WAV renderer (audible evidence) ---- */
-static void wav_write(const char *fn, double t0, double t1) {
+/* ---- offline WAV renderer (audible evidence), sample-fn parameterized ---- */
+static void wav_write_fn(const char *fn, double t0, double t1, double (*sample)(double)) {
     size_t n = (size_t)((t1 - t0) * SR);
     int16_t *pcm = malloc(n * 2 * sizeof(int16_t));
     double peak = 0.0;
     double *L = malloc(n * sizeof(double)), *R = malloc(n * sizeof(double));
     for (size_t i = 0; i < n; i++) {
         double t = t0 + (double)i / SR;
-        double s = score_sample(t);
+        double s = sample(t);
         L[i] = s; R[i] = s * 0.88;
         if (fabs(s) > peak) peak = fabs(s);
     }
@@ -151,9 +152,85 @@ static void wav_write(const char *fn, double t0, double t1) {
     free(pcm); free(L); free(R);
 }
 
+static void wav_write(const char *fn, double t0, double t1) { wav_write_fn(fn, t0, t1, score_sample); }
+
+/* ============ SCORE V2 — dark electronic: breakbeat/IDM/dubstep ============
+ * Düsterer, hart treibender Entwurf (Lino-Forderung: Breakbeat/Hip-Hop/IDM/Dubstep,
+ * musikalische Dramaturgie, sync-fähige Events). Gleiche 120s-Timeline-Struktur.
+ */
+static double sv2_kick(double t) { return (t < 0 || t > 0.4) ? 0.0 : exp(-t * 8.5) * sin(2 * PI * (135.0 * exp(-t * 13.0) + 42.0) * t); }
+static double sv2_snare(double t) {
+    if (t < 0 || t > 0.18) return 0.0;
+    static uint64_t rs = 99;
+    rs = rs * 6364136223846793005ULL + 1;
+    return 0.30 * exp(-t * 22.0) * ((double)(rs >> 40) / 8388608.0 * 2 - 1) + 0.12 * sin(2 * PI * 190.0 * t) * exp(-t * 30.0);
+}
+static double sv2_hat(double t, float open) { return (t >= 0 && t < (open ? 0.09 : 0.03)) ? (open ? 0.10 : 0.07) * exp(-t * (open ? 18.0 : 60.0)) * 0.9 : 0.0; }
+static double sv2_wobble(double t, double f, double depth, double rate) {
+    /* dubstep-style: LFO-modulated saw-ish bass */
+    double lfo = 0.5 + 0.5 * sin(2 * PI * rate * t + sin(2 * PI * rate * 0.5 * t) * 1.7);
+    double ph = 2 * PI * f * t;
+    double saw = 2.0 * (t * f - floor(t * f + 0.5));
+    return (sin(ph) + 0.45 * saw) * lfo * depth * (0.65 + 0.35 * sin(2 * PI * f * 0.5 * t));
+}
+static double h1v2(double n) { return fabs(fmod(sin(n * 12.9898) * 43758.5453, 1.0)); }
+static double sv2_glitch_stutter(double t, double src) {
+    /* IDM stutter: retrigger 1/32 slices randomly */
+    double g = floor(t * 32.0);
+    if (h1v2(g * 3.7) < 0.55) return src;
+    return src * 0.0 + sin(2 * PI * 800.0 * (t - g / 32.0)) * 0.06 * h1v2(g * 1.3);
+}
+
+static double score2_sample(double t) {
+    int s = scene_of(t);
+    double out = 0.0;
+    /* breakbeat pattern: kicks 0/0.375/0.75, snare on 2+4 of 1s-bar at 2Hz subgrid */
+    double bar = floor(t * 2.0);
+    double bt = fmod(t, 0.5);
+    double sn_t = fmod(t + 0.5, 1.0); /* snare each second, syncopated variant per bar */
+    int sn_pat = (int)bar % 4;
+    double sn_pos = (sn_pat == 1 || sn_pat == 3) ? 0.375 : 0.5;
+    double has_sn = (fmod(t, 1.0) >= sn_pos && fmod(t, 1.0) < sn_pos + 0.02) ? sn_t : -1.0;
+    double kick_amt = (s == 4) ? 0.0 : (s == 0 ? 0.0 : 0.42);
+    /* off-grid breakbeat kick: extra kick at 0.375 in odd bars */
+    double ob_t = fmod(t - 0.375, 1.0);
+    double offkick = ((sn_pat % 2 == 1) && ob_t >= 0 && ob_t < 0.25) ? sv2_kick(ob_t) * 0.55 : 0.0;
+
+    out += kick(bt, kick_amt) + offkick;
+    if (has_sn >= 0) out += sv2_snare(has_sn);
+    out += sv2_hat(fmod(t, 0.25), (s >= 5));
+    if (s >= 2) out += sv2_hat(fmod(t + 0.125, 0.25), 0);
+
+    /* bass: order -> wobble (dubstep) -> fracture stutter */
+    if (s <= 3) out += bass(t, 49.0, 0.22) + bass(t, 98.0, 0.07);
+    if (s == 4) out += sv2_wobble(t, 41.2, 0.34, 2.0 + (double)sn_pat);
+    if (s == 5) out += sv2_wobble(t, 49.0, 0.30, 4.0) * 0.9;
+    if (s >= 6) out += bass(t, 49.0, 0.18) + sv2_wobble(t, 65.41, 0.16, 6.0);
+
+    /* dark pad + drone (E minor, low) */
+    double dfade = (s == 7) ? 1.0 - (t - 112.0) / 8.0 : 1.0;
+    out += drone(t, 41.2) * dfade * 0.9;
+    if (s >= 1 && s <= 3) out += 0.06 * (sin(2 * PI * 123.47 * t) + 0.7 * sin(2 * PI * 146.83 * t));
+
+    /* lead motifs: dark, sparse */
+    if (s == 2) out += motif(t, 30.0, 1) * 0.9 + motif(t, 39.0, 1) * 0.9;
+    if (s == 3) out += motif(t, 47.0, 0) * 0.6;
+    if (s == 6) out += motif(t, 101.0, 2) + motif(t, 105.0, 2);
+    if (s == 7) out += motif(t, 113.0, 2) * 0.7 * dfade;
+
+    /* IDM glitch stutter: only in fault + rewrite windows */
+    if (s == 4) out = sv2_glitch_stutter(t, out * 0.9);
+    if (s == 5 && fmod(t, 4.0) > 3.0) out = sv2_glitch_stutter(t, out * 0.85);
+    return out;
+}
+
 int main(int argc, char **argv) {
-    if (argc >= 5 && !strcmp(argv[1], "seg")) { /* seg <t0> <t1> <outfile> */
+    if (argc >= 5 && !strcmp(argv[1], "seg")) { /* seg <t0> <t1> <outfile> — score v1 */
         wav_write(argv[4], atof(argv[2]), atof(argv[3]));
+        return 0;
+    }
+    if (argc >= 5 && !strcmp(argv[1], "seg2")) { /* seg2 <t0> <t1> <outfile> — score v2 */
+        wav_write_fn(argv[4], atof(argv[2]), atof(argv[3]), score2_sample);
         return 0;
     }
     if (argc >= 2 && !strcmp(argv[1], "full")) {

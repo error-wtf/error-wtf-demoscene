@@ -23,13 +23,6 @@
 #define FPS 30
 #define PI 3.14159265358979323846
 
-#define GLSL_COMMON \
-    "float ew_hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\n" \
-    "float ew_noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);\n" \
-    " return mix(mix(ew_hash(i),ew_hash(i+vec2(1,0)),f.x),mix(ew_hash(i+vec2(0,1)),ew_hash(i+vec2(1,1)),f.x),f.y);}\n" \
-    "float ew_fbm(vec2 p){float a=0.5,s=0.0;for(int i=0;i<5;i++){s+=a*ew_noise(p);p*=2.03;a*=0.5;}return s;}\n" \
-    "mat2 ew_rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}\n"
-
 static const char *VS_TRI =
     "#version 330 core\n"
     "const vec2 v[3]=vec2[3](vec2(-1.,-1.),vec2(3.,-1.),vec2(-1.,3.));\n"
