@@ -16,3 +16,6 @@ __pycache__/
 tmp/
 .cache/
 *.ppm
+releases/1m/media/*.mp4
+releases/1m/media/*.gif
+releases/1m/media/preview_palette.png

@@ -1,0 +1,26 @@
+{
+  "schema": "errorwtf.1m.media.source-provenance.v1",
+  "export_date": "2026-10-28T18:10:21+01:00",
+  "source_path": "/mnt/DATEN/ERROR_WTF_DEMOSCENE/errorwtf-1m",
+  "source_sha256": "7a0786dde1946455d767211f11d763becdb2e78123e15d1baf686e71fddb8af2",
+  "source_bytes": 1048576,
+  "source_git_commit": "5eef119be566d3042b948695ee6082a6105b18e5",
+  "source_version": "v0.1.0-alpha (development build, gate 9/9 PASS)",
+  "measured_duration_seconds": 120.0,
+  "video_source": {
+    "method": "deterministic offline render pass (media prompt §3 B)",
+    "renderer": "src/1m/production.c ERRORWTF_OFFLINE env",
+    "fps": 60,
+    "frames": 7200,
+    "resolution": "1280x720",
+    "clock": "t = frame_index / fps (single clock, identical scene_of()/shader timeline as release binary)"
+  },
+  "audio_source": {
+    "method": "score_sample() offline render to PCM WAV (music/1m/errorwtf_1m_score_preview.wav)",
+    "identity": "identical function as the live ALSA thread in the release binary (single source of truth, verified 5760000/5760000 samples in gate run)",
+    "sample_rate": 48000,
+    "channels": 2
+  },
+  "capture_method": "offline_render_pipe",
+  "status": "VERIFIED"
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "errorwtf.1m.media.export-manifest.v1",
+  "export_date": "2026-10-28T18:10:21+01:00",
+  "source": {
+    "binary": "errorwtf-1m",
+    "sha256": "7a0786dde1946455d767211f11d763becdb2e78123e15d1baf686e71fddb8af2",
+    "bytes": 1048576,
+    "git_commit": "5eef119be566d3042b948695ee6082a6105b18e5"
+  },
+  "full_mp4": {
+    "path": "releases/1m/media/ERROR_wtf_ONE_MEGABYTE_full.mp4",
+    "render": "offline pass 60fps (ERRORWTF_OFFLINE), 7200 frames, single-clock",
+    "video": "h264 1280x720 yuv420p crf17 preset slow, faststart",
+    "audio": "aac 320k 48000Hz stereo (score_preview.wav from score_sample())",
+    "duration_seconds": 120.0,
+    "size_bytes": 61943333
+  },
+  "preview_gif": {
+    "path": "releases/1m/media/ERROR_wtf_ONE_MEGABYTE_preview.gif",
+    "selection": "THE SIGNATURE 100-112s (start 100, dur 12)",
+    "spec": "800x450 10fps sierra2_4a-palette-v2 dither, loop 0, silent",
+    "frames": 120,
+    "size_bytes": 20921449
+  },
+  "readme_gif": {
+    "path": "releases/1m/media/ERROR_wtf_ONE_MEGABYTE_preview_readme.gif",
+    "selection": "same, 9s / 640px variant",
+    "spec": "640x360 10fps bayer:bayer_scale=5, loop 0, silent",
+    "size_bytes": 10012577
+  },
+  "artifacts_consistency_note": "Scene polish v6 + gate re-run (PASS 9/9) precede this export; gate binary, offline renderer and preview all built from production.c @ 5eef119."
+}

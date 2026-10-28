@@ -5,11 +5,18 @@
 
 Demoscene-Produktionsreihe von **ERROR.wtf** (Lino Casu).
 
+<p align="center">
+  <img src="https://github.com/error-wtf/error-wtf-demoscene/releases/download/v0.2.0-media/ERROR_wtf_ONE_MEGABYTE_preview_readme.gif" alt="ERROR.wtf — BEYOND THE ERROR: 1MiB preview (silent loop)" width="640">
+</p>
+
 **Status: In aktiver Entwicklung.** Diese Datei reflektiert ausschließlich den realen Stand.
 
 ## 1MiB — „ONE MEGABYTE" (Folgeauftrag, aktuelles Werk)
 
 Laufende Produktion mit **exakt 1.048.576 Bytes**, 120-s-AV-Timeline, Linux.
+
+> **Video mit Original-Soundtrack:** [`ERROR_wtf_ONE_MEGABYTE_full.mp4`](https://github.com/error-wtf/error-wtf-demoscene/releases/download/v0.2.0-media/ERROR_wtf_ONE_MEGABYTE_full.mp4)
+> (120 s · 60 fps · H.264/AAC — deterministischer Offline-Render aus demselben Produktionscode wie das Release-Binary)
 
 | Phase | Stand |
 |---|---|
