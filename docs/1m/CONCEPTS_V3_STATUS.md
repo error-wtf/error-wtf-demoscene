@@ -35,3 +35,16 @@ Abnahme entscheidet ALLEIN Lino. Vorlage nach abgeschlossener technischer Runde.
 - Videos: releases/1m/concepts_v3/concept3_{A,B,C}.mp4 (12 s, h264+AAC)
 - Frames/Strips: captures/1m/c3_{A,B,C}_t{1,6,11}.png, c3_*_strip.png
 - KEIN Release-Upload, KEIN „fertig" — Vorlage erst nach Fix-Runde 2.
+
+## Runde 3 — VORLAGE-STAND (Qualitäts-Gate an Lino)
+- A3 NEURAL SANCTUM: **7/10** — rotes Fog-Bleed ✓, Glow-Banding gelöst ✓;
+  Rest: horizontale comb-striping auf Flächen, rote/warme Fog-Systeme noch getrennt
+- B3 GLYPH SWARM: **6/10** — roter Kern jetzt pink-getönt (vorher neutral-weiß);
+  Rest: Hotspot clippt weiterhin (Reviewer: Sättigung vor Tonemap / chroma-erhaltend)
+- D3 NEON MITOSIS (NEU, ersetzt C3 in der Vorlage): **7/10** — kaleido-IFS
+  (6 animierte Fold-Iterationen = kontinuierliche Transformation), rotes Neon als
+  diegetisches Membran-Licht, Mikro-Bio-Morphologien, „authored not default";
+  Rest: Makro-Geste/Event-Hierarchie (Division-Event auf Phrase-Grenzen),
+  Cyan-Entladung zu selten sichtbar, IFS-Perfkosten
+- C3 WOBBLE BASIN: VERWORFEN für die Vorlage (t≈6-March-Ausfall, Relief schwach)
+- Technische Reviews = Messwerkzeug; künstlerische Freigabe = Lino allein.
