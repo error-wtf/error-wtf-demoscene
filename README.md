@@ -18,6 +18,8 @@ Laufende Produktion mit **exakt 1.048.576 Bytes**, 120-s-AV-Timeline, Linux.
 > **Video mit Original-Soundtrack:** [`ERROR_wtf_ONE_MEGABYTE_full.mp4`](https://github.com/error-wtf/error-wtf-demoscene/releases/download/v0.2.0-media/ERROR_wtf_ONE_MEGABYTE_full.mp4)
 > (120 s · 60 fps · H.264/AAC — deterministischer Offline-Render aus demselben Produktionscode wie das Release-Binary)
 
+<video controls preload="metadata" width="640" src="media/ERROR_wtf_ONE_MEGABYTE_web.mp4"></video>
+
 | Phase | Stand |
 |---|---|
 | Baseline-Gate | BASELINE_PARTIAL dokumentiert (docs/1m/BASELINE_INVENTORY.md) |
