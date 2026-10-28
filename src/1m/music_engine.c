@@ -152,6 +152,10 @@ static void wav_write(const char *fn, double t0, double t1) {
 }
 
 int main(int argc, char **argv) {
+    if (argc >= 5 && !strcmp(argv[1], "seg")) { /* seg <t0> <t1> <outfile> */
+        wav_write(argv[4], atof(argv[2]), atof(argv[3]));
+        return 0;
+    }
     if (argc >= 2 && !strcmp(argv[1], "full")) {
         wav_write("music/1m/errorwtf_1m_score_preview.wav", 0, DUR);
     } else {
