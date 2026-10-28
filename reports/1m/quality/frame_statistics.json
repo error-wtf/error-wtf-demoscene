@@ -1,0 +1,10 @@
+{
+ "schema": "errorwtf.1m.quality.frame-statistics.v1",
+ "source_sha256_prefix": "7a0786dde1946455",
+ "frames": 120,
+ "summary": {
+  "colorless_seconds": 82,
+  "empty_or_flat_seconds": 5,
+  "verdict": "75/120 seconds fail minimum visual-identity criteria (no saturated red/cyan pixels)"
+ }
+}

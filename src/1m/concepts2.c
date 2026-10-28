@@ -11,8 +11,14 @@
 #include <string.h>
 #include <time.h>
 
-#define W 1280
-#define H 720
+#ifndef EW_W
+#define EW_W 1280
+#endif
+#ifndef EW_H
+#define EW_H 720
+#endif
+#define W EW_W
+#define H EW_H
 #define DUR 12
 #define FPS 30
 #define PI 3.14159265358979323846
@@ -32,7 +38,7 @@ static const char *VS_TRI =
 /* ================= A — CATHEDRAL OF SIGNALS (SDF raymarch) ================= */
 /* real FS_A (uses plain time offset instead of helper): */
 static const char *FS_A_FULL =
-    "#version 330 core\nuniform float u_time;out vec4 o;\n" GLSL_COMMON
+    "#version 330 core\nuniform float u_time;uniform vec2 u_res;out vec4 o;\n" GLSL_COMMON
     "float sdbox(vec2 p,vec2 b){vec2 d=abs(p)-b;return length(max(d,0.))+min(max(d.x,d.y),0.);}\n"
     "float map(vec3 p,out float mat){\n"
     " mat=0.0;\n"
@@ -48,11 +54,11 @@ static const char *FS_A_FULL =
     "vec3 ew_norm(vec3 p){float e=0.001;float m;vec2 k=vec2(1,-1);\n"
     " return normalize(k.xyy*map(p+k.xyy*e,m)+k.yyx*map(p+k.yyx*e,m)+k.yxy*map(p+k.yxy*e,m)+k.xyx*map(p+k.xyx*e,m));}\n"
     "void main(){\n"
-    " vec2 uv=(gl_FragCoord.xy*2.0-vec2(1280,720))/720.0;\n"
+    " vec2 uv=(gl_FragCoord.xy*2.0-u_res)/u_res.y;\n"
     " float t=u_time;\n"
     " float beat=fract(t*2.0);\n"
     " vec3 ro=vec3(sin(t*0.35)*0.35,0.1+0.05*sin(t*0.6),t*2.4);\n"
-    " vec3 rd=normalize(vec3(uv,1.6+0.15*exp(-beat*6.0)));\n"
+    " vec3 rd=normalize(vec3(uv,1.6+0.45*exp(-beat*6.0)));\n"
     " rd.xz=ew_rot(sin(t*0.2)*0.06)*rd.xz;\n"
     " float d=0.02;float m;vec3 p=ro;float glow=0.0;float hitm=10.0;\n"
     " for(int i=0;i<96;i++){p=ro+rd*d;float dd=map(p,m);glow+=exp(-abs(dd)*12.0)*0.012;\n"
@@ -63,10 +69,18 @@ static const char *FS_A_FULL =
     "  vec3 lc=normalize(vec3(-0.3,-0.2,1.0)); float dc=max(dot(n,lc),0.0);\n"
     "  vec3 base=vec3(0.10,0.13,0.17);\n"
     "  if(m>1.5)base=vec3(0.14,0.16,0.20); if(m>0.5&&m<1.5)base=vec3(0.12,0.12,0.14);\n"
-    "  col=base*(dr*vec3(1.0,0.18,0.10)*1.6+dc*vec3(0.15,0.70,0.85)*1.2);\n"
+    "  /* ornament: ribs on pillars (trig detail, breaks flat slabs) */\n"
+    "  float rib=0.5+0.5*sin(p.z*14.0+ (m>1.5? p.y*4.0:0.0));\n"
+    "  base+=vec3(0.02,0.03,0.04)*rib;\n"
+    "  col=base*(dr*vec3(1.0,0.18,0.10)*2.4+dc*vec3(0.15,0.70,0.85)*3.0);\n"
     "  float fog=1.0-exp(-d*0.055); col=mix(col,vec3(0.004,0.006,0.010),fog);}\n"
     " col+=vec3(0.5,0.12,0.06)*glow+vec3(0.10,0.45,0.55)*glow*0.7;\n"
     " col+=vec3(0.9,0.15,0.05)*pow(max(dot(rd,normalize(vec3(0.4,0.15,-0.9))),0.0),40.0)*1.2;\n"
+    " /* cyan end-portal: visible light at corridor end */\n"
+    " col+=vec3(0.10,0.85,1.00)*pow(max(dot(rd,normalize(vec3(-0.10,-0.08,1.0))),0.0),60.0)*(1.4+0.5*sin(t*1.3));\n"
+    " col*=1.55;                                    /* exposure: mid-tones live */\n"
+    " col=col/(1.0+col);                            /* reinhard tonemap */\n"
+    " col+= (ew_hash(gl_FragCoord.xy+t)-0.5)/255.0; /* debanding dither */\n"
     " o=vec4(col,1.0);}";
 
 /* ================= B — PARTICLE COLLAPSE (analytic particle field, fullscreen) ================= */
@@ -146,6 +160,8 @@ int main(int argc, char **argv) {
     glViewport_p(0, 0, W, H);
 
     GLint ul_t = glGetUniformLocation_p(prog, "u_time");
+    GLint ul_res = glGetUniformLocation_p(prog, "u_res");
+    glUniform2f_p(ul_res, (float)W, (float)H);
     unsigned char *flip = malloc((size_t)W * H * 3);
     unsigned char *px = malloc((size_t)W * H * 3);
     int total = DUR * FPS;
